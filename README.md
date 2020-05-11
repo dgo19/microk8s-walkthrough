@@ -236,3 +236,72 @@ $ curl http://10.1.20.6 | head -5
 <title>Welcome to nginx!</title>
 <style>
 ``` 
+Create service for my-webserver.
+``` 
+$ kubectl -n test create service clusterip my-webserver --tcp=80:80
+service/my-webserver created
+$ kubectl -n test get svc
+NAME           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+my-webserver   ClusterIP   10.152.183.183   <none>        80/TCP    42s
+$ kubectl -n test describe svc my-webserver 
+Name:              my-webserver
+Namespace:         test
+Labels:            app=my-webserver
+Annotations:       <none>
+Selector:          app=my-webserver
+Type:              ClusterIP
+IP:                10.152.183.183
+Port:              80-80  80/TCP
+TargetPort:        80/TCP
+Endpoints:         10.1.20.5:80,10.1.20.6:80
+Session Affinity:  None
+Events:            <none>
+$ curl http://10.152.183.183 | head -5
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   612  100   612    0     0   597k      0 --:--:-- --:--:-- --:--:--  597k
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+$ curl http://10.152.183.183 | head -5
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   612  100   612    0     0   597k      0 --:--:-- --:--:-- --:--:--  597k
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+$ curl http://10.152.183.183 | head -5
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   612  100   612    0     0   597k      0 --:--:-- --:--:-- --:--:--  597k
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+$ curl http://10.152.183.183 | head -5
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   612  100   612    0     0   597k      0 --:--:-- --:--:-- --:--:--  597k
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+$ kubectl -n test logs my-webserver-6859dc4665-
+my-webserver-6859dc4665-mdqkg  my-webserver-6859dc4665-xmbsh  
+$ kubectl -n test logs my-webserver-6859dc4665-mdqkg 
+10.1.20.1 - - [11/May/2020:15:14:57 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+10.1.20.1 - - [11/May/2020:15:15:07 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+10.1.20.1 - - [11/May/2020:15:15:14 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+10.1.20.1 - - [11/May/2020:15:23:31 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+10.1.20.1 - - [11/May/2020:15:23:33 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+$ kubectl -n test logs my-webserver-6859dc4665-xmbsh 
+10.1.20.1 - - [11/May/2020:15:15:20 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+10.1.20.1 - - [11/May/2020:15:23:32 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+10.1.20.1 - - [11/May/2020:15:23:33 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+``` 
