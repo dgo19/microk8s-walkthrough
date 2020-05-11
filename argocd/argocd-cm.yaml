@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  repositories: |
+    - name: dgo19-microk8s-walkthrough
+      type: git
+      url: https://github.com/dgo19/microk8s-walkthrough.git
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+
