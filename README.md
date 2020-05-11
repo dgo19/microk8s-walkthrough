@@ -591,7 +591,7 @@ Delete the test namespace
 $ kubectl delete namespace test
 namespace "test" deleted
 ``` 
-Create my-webserver by using kustomize build. Examples at test-my-webserver
+Create my-webserver by using kustomize build. Examples at applications/test-my-webserver
 ``` 
 $ kustomize build . | kubectl apply -f -
 namespace/test created
@@ -603,7 +603,7 @@ NAME                            READY   STATUS    RESTARTS   AGE
 my-webserver-6859dc4665-4hwpq   1/1     Running   0          9s
 my-webserver-6859dc4665-mcspx   1/1     Running   0          9s
 ``` 
-Create my-webserver by kubectl -k. Examples at test-my-webserver
+Create my-webserver by kubectl -k. Examples at applications/test-my-webserver
 ``` 
 $ kubectl delete namespace test
 namespace "test" deleted
