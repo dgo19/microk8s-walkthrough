@@ -17,7 +17,6 @@ $ echo "alias kubectl='microk8s kubectl'" >> .bashrc
 $ echo 'source <(microk8s kubectl completion bash)' >> .bashrc
 ```
 Re-enter user session.
-```
 ## Installation of microk8s addons
 ### addon dns
 Enable the dns addon
