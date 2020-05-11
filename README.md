@@ -3,9 +3,7 @@
 ## Requirements
 - ubuntu or linux distributrion with snap
 - addition packages
-  - apache2-utils
   - curl
-  - git
 
 ## Installation of microk8s
 ```
