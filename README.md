@@ -16,6 +16,11 @@ $ sudo usermod -a -G microk8s dgo
 $ echo "alias kubectl='microk8s kubectl'" >> .bashrc
 $ echo 'source <(microk8s kubectl completion bash)' >> .bashrc
 ```
+Get kustomize
+```
+$ mkdir ~/bin
+$ curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.5.4/kustomize_v3.5.4_linux_amd64.tar.gz | tar xvzC ~/bin -f -
+```
 Re-enter user session.
 ## Installation of microk8s addons
 ### addon dns
@@ -581,4 +586,34 @@ Commercial support is available at
 </html>
 * Connection #0 to host localhost left intact
 ``` 
-
+Delete the test namespace
+``` 
+$ kubectl delete namespace test
+namespace "test" deleted
+``` 
+Create my-webserver by using kustomize build. Examples at test-my-webserver
+``` 
+$ kustomize build . | kubectl apply -f -
+namespace/test created
+service/my-webserver created
+deployment.apps/my-webserver created
+ingress.extensions/ingress-my-webserver created
+$ kubectl -n test get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+my-webserver-6859dc4665-4hwpq   1/1     Running   0          9s
+my-webserver-6859dc4665-mcspx   1/1     Running   0          9s
+``` 
+Create my-webserver by kubectl -k. Examples at test-my-webserver
+``` 
+$ kubectl delete namespace test
+namespace "test" deleted
+$ kubectl apply -k .
+namespace/test created
+service/my-webserver created
+deployment.apps/my-webserver created
+ingress.extensions/ingress-my-webserver created
+$ kubectl -n test get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+my-webserver-6859dc4665-pglw2   1/1     Running   0          56s
+my-webserver-6859dc4665-qcr4k   1/1     Running   0          56s
+``` 
