@@ -1,4 +1,4 @@
-# microk8s walkthough
+# microk8s walkthrough
 
 ## Requirements
 - ubuntu or linux distributrion with snap
@@ -105,6 +105,9 @@ deployment.apps/my-webserver   1/1     1            1           27s
 
 NAME                                      DESIRED   CURRENT   READY   AGE
 replicaset.apps/my-webserver-6859dc4665   1         1         1       27s
+``` 
+Access the new pod
+``` 
 $ ping 10.1.20.4
 PING 10.1.20.4 (10.1.20.4) 56(84) bytes of data.
 64 bytes from 10.1.20.4: icmp_seq=1 ttl=64 time=0.111 ms
@@ -161,4 +164,75 @@ Commercial support is available at
 </html>
 * Connection #0 to host 10.1.20.4 left intact
 ``` 
-
+Inspect the pod logs
+``` 
+$ kubectl -n test get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+my-webserver-6859dc4665-b52b8   1/1     Running   0          21m
+dgo@dgo-VirtualBox:~/test$ kubectl -n test logs my-webserver-6859dc4665-b52b8 
+10.1.20.1 - - [11/May/2020:14:52:29 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
+10.1.20.1 - - [11/May/2020:14:54:38 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0" "-"
+10.1.20.1 - - [11/May/2020:14:54:38 +0000] "GET /favicon.ico HTTP/1.1" 404 154 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0" "-"
+2020/05/11 14:54:38 [error] 6#6: *2 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 10.1.20.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "10.1.20.4"
+``` 
+Delete the pod - it will be restarted by kubernetes
+``` 
+$ kubectl -n test get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+my-webserver-6859dc4665-b52b8   1/1     Running   0          22m
+$ kubectl -n test delete pod my-webserver-6859dc4665-b52b8 
+pod "my-webserver-6859dc4665-b52b8" deleted
+$ kubectl -n test get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+my-webserver-6859dc4665-mdqkg   1/1     Running   0          3s
+$ kubectl -n test logs my-webserver-6859dc4665-mdqkg 
+$ kubectl -n test get events
+LAST SEEN   TYPE     REASON              OBJECT                               MESSAGE
+23m         Normal   Scheduled           pod/my-webserver-6859dc4665-b52b8    Successfully assigned test/my-webserver-6859dc4665-b52b8 to dgo-virtualbox
+23m         Normal   Pulling             pod/my-webserver-6859dc4665-b52b8    Pulling image "nginx"
+22m         Normal   Pulled              pod/my-webserver-6859dc4665-b52b8    Successfully pulled image "nginx"
+22m         Normal   Created             pod/my-webserver-6859dc4665-b52b8    Created container nginx
+22m         Normal   Started             pod/my-webserver-6859dc4665-b52b8    Started container nginx
+25s         Normal   Killing             pod/my-webserver-6859dc4665-b52b8    Stopping container nginx
+25s         Normal   Scheduled           pod/my-webserver-6859dc4665-mdqkg    Successfully assigned test/my-webserver-6859dc4665-mdqkg to dgo-virtualbox
+25s         Normal   Pulling             pod/my-webserver-6859dc4665-mdqkg    Pulling image "nginx"
+24s         Normal   Pulled              pod/my-webserver-6859dc4665-mdqkg    Successfully pulled image "nginx"
+24s         Normal   Created             pod/my-webserver-6859dc4665-mdqkg    Created container nginx
+23s         Normal   Started             pod/my-webserver-6859dc4665-mdqkg    Started container nginx
+23m         Normal   SuccessfulCreate    replicaset/my-webserver-6859dc4665   Created pod: my-webserver-6859dc4665-b52b8
+25s         Normal   SuccessfulCreate    replicaset/my-webserver-6859dc4665   Created pod: my-webserver-6859dc4665-mdqkg
+23m         Normal   ScalingReplicaSet   deployment/my-webserver              Scaled up replica set my-webserver-6859dc4665 to 1
+``` 
+Scale the pod and increase the replicas to 2.
+``` 
+$ kubectl -n test scale deployment --replicas=2 my-webserver
+deployment.apps/my-webserver scaled
+$ kubectl -n test get deployment
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+my-webserver   2/2     2            2           27m
+$ kubectl -n test get replicaset
+NAME                      DESIRED   CURRENT   READY   AGE
+my-webserver-6859dc4665   2         2         2       27m
+$ kubectl -n test get pods -o wide
+NAME                            READY   STATUS    RESTARTS   AGE     IP          NODE             NOMINATED NODE   READINESS GATES
+my-webserver-6859dc4665-mdqkg   1/1     Running   0          4m33s   10.1.20.5   dgo-virtualbox   <none>           <none>
+my-webserver-6859dc4665-xmbsh   1/1     Running   0          20s     10.1.20.6   dgo-virtualbox   <none>           <none>
+$ curl http://10.1.20.5 | head -5
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   612  100   612    0     0   597k      0 --:--:-- --:--:-- --:--:--  597k
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+$ curl http://10.1.20.6 | head -5
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   612  100   612    0     0   597k      0 --:--:-- --:--:-- --:--:--  597k
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+``` 
