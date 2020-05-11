@@ -81,6 +81,141 @@ $ kubectl -n kube-system get storageclass
 NAME                          PROVISIONER            RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
 microk8s-hostpath (default)   microk8s.io/hostpath   Delete          Immediate           false                  46s
 ```
+### addon ingress
+Enable and verify ingress addon
+```
+$ microk8s enable ingress
+Enabling Ingress
+namespace/ingress created
+serviceaccount/nginx-ingress-microk8s-serviceaccount created
+clusterrole.rbac.authorization.k8s.io/nginx-ingress-microk8s-clusterrole created
+role.rbac.authorization.k8s.io/nginx-ingress-microk8s-role created
+clusterrolebinding.rbac.authorization.k8s.io/nginx-ingress-microk8s created
+rolebinding.rbac.authorization.k8s.io/nginx-ingress-microk8s created
+configmap/nginx-load-balancer-microk8s-conf created
+daemonset.apps/nginx-ingress-microk8s-controller created
+Ingress is enabled
+$ kubectl -n ingress get daemonset
+NAME                                DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+nginx-ingress-microk8s-controller   1         1         1       1            1           <none>          76s
+$ kubectl -n ingress describe daemonsets.apps nginx-ingress-microk8s-controller 
+Name:           nginx-ingress-microk8s-controller
+Selector:       name=nginx-ingress-microk8s
+Node-Selector:  <none>
+Labels:         microk8s-application=nginx-ingress-microk8s
+Annotations:    deprecated.daemonset.template.generation: 1
+Desired Number of Nodes Scheduled: 1
+Current Number of Nodes Scheduled: 1
+Number of Nodes Scheduled with Up-to-date Pods: 1
+Number of Nodes Scheduled with Available Pods: 1
+Number of Nodes Misscheduled: 0
+Pods Status:  1 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:           name=nginx-ingress-microk8s
+  Service Account:  nginx-ingress-microk8s-serviceaccount
+  Containers:
+   nginx-ingress-microk8s:
+    Image:       quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.25.1
+    Ports:       80/TCP, 443/TCP
+    Host Ports:  80/TCP, 443/TCP
+    Args:
+      /nginx-ingress-controller
+      --configmap=$(POD_NAMESPACE)/nginx-load-balancer-microk8s-conf
+      --publish-status-address=127.0.0.1
+    Liveness:  http-get http://:10254/healthz delay=30s timeout=5s period=10s #success=1 #failure=3
+    Environment:
+      POD_NAME:        (v1:metadata.name)
+      POD_NAMESPACE:   (v1:metadata.namespace)
+    Mounts:           <none>
+  Volumes:            <none>
+Events:
+  Type    Reason            Age   From                  Message
+  ----    ------            ----  ----                  -------
+  Normal  SuccessfulCreate  95s   daemonset-controller  Created pod: nginx-ingress-microk8s-controller-98zl5
+$ kubectl -n ingress get pods -o wide
+NAME                                      READY   STATUS    RESTARTS   AGE   IP              NODE             NOMINATED NODE   READINESS GATES
+nginx-ingress-microk8s-controller-98zl5   1/1     Running   0          12m   192.168.0.133   dgo-virtualbox   <none>           <none>
+```
+```
+$ curl -v http://localhost
+*   Trying 127.0.0.1:80...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 80 (#0)
+> GET / HTTP/1.1
+> Host: localhost
+> User-Agent: curl/7.68.0
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 404 Not Found
+< Server: openresty/1.15.8.1
+< Date: Mon, 11 May 2020 16:19:35 GMT
+< Content-Type: text/html
+< Content-Length: 159
+< Connection: keep-alive
+< 
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>openresty/1.15.8.1</center>
+</body>
+</html>
+* Connection #0 to host localhost left intact
+```
+```
+$ curl -kv https://localhost
+*   Trying 127.0.0.1:443...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* successfully set certificate verify locations:
+*   CAfile: /etc/ssl/certs/ca-certificates.crt
+  CApath: /etc/ssl/certs
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+* TLSv1.2 (IN), TLS handshake, Finished (20):
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+* ALPN, server accepted to use h2
+* Server certificate:
+*  subject: O=Acme Co; CN=Kubernetes Ingress Controller Fake Certificate
+*  start date: May 11 16:05:16 2020 GMT
+*  expire date: May 11 16:05:16 2021 GMT
+*  issuer: O=Acme Co; CN=Kubernetes Ingress Controller Fake Certificate
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+* Using HTTP2, server supports multi-use
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* Using Stream ID: 1 (easy handle 0x563139dbbdb0)
+> GET / HTTP/2
+> Host: localhost
+> user-agent: curl/7.68.0
+> accept: */*
+> 
+* Connection state changed (MAX_CONCURRENT_STREAMS == 128)!
+< HTTP/2 404 
+< server: openresty/1.15.8.1
+< date: Mon, 11 May 2020 16:19:49 GMT
+< content-type: text/html
+< content-length: 159
+< strict-transport-security: max-age=15724800; includeSubDomains
+< 
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>openresty/1.15.8.1</center>
+</body>
+</html>
+* Connection #0 to host localhost left intact
+```
 ## App Deployments
 ### nginx webserver
 Create namespace and deployment for nginx
@@ -305,3 +440,145 @@ $ kubectl -n test logs my-webserver-6859dc4665-xmbsh
 10.1.20.1 - - [11/May/2020:15:23:32 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
 10.1.20.1 - - [11/May/2020:15:23:33 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.68.0" "-"
 ``` 
+Create and test ingress.
+``` 
+$ cat <<EOF | kubectl -n test apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-my-webserver
+spec:
+  rules:
+  - host: my-webserver.microk8s.local
+    http:
+      paths:
+      - backend:
+          serviceName: my-webserver
+          servicePort: 80
+EOF
+ingress.extensions/ingress-my-webserver created
+``` 
+``` 
+$ curl -v --header "Host: my-webserver.microk8s.local" http://localhost
+*   Trying 127.0.0.1:80...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 80 (#0)
+> GET / HTTP/1.1
+> Host: my-webserver.microk8s.local
+> User-Agent: curl/7.68.0
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Server: openresty/1.15.8.1
+< Date: Mon, 11 May 2020 16:28:28 GMT
+< Content-Type: text/html
+< Content-Length: 612
+< Connection: keep-alive
+< Vary: Accept-Encoding
+< Last-Modified: Tue, 14 Apr 2020 14:19:26 GMT
+< ETag: "5e95c66e-264"
+< Accept-Ranges: bytes
+< 
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+* Connection #0 to host localhost left intact
+``` 
+``` 
+dgo@dgo-VirtualBox:~/test/nginx$ curl -kv --header "Host: my-webserver.microk8s.local" https://localhost
+*   Trying 127.0.0.1:443...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* successfully set certificate verify locations:
+*   CAfile: /etc/ssl/certs/ca-certificates.crt
+  CApath: /etc/ssl/certs
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+* TLSv1.2 (IN), TLS handshake, Finished (20):
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+* ALPN, server accepted to use h2
+* Server certificate:
+*  subject: O=Acme Co; CN=Kubernetes Ingress Controller Fake Certificate
+*  start date: May 11 16:05:16 2020 GMT
+*  expire date: May 11 16:05:16 2021 GMT
+*  issuer: O=Acme Co; CN=Kubernetes Ingress Controller Fake Certificate
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+* Using HTTP2, server supports multi-use
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* Using Stream ID: 1 (easy handle 0x55a60c1bddb0)
+> GET / HTTP/2
+> Host: my-webserver.microk8s.local
+> user-agent: curl/7.68.0
+> accept: */*
+> 
+* Connection state changed (MAX_CONCURRENT_STREAMS == 128)!
+< HTTP/2 200 
+< server: openresty/1.15.8.1
+< date: Mon, 11 May 2020 16:28:49 GMT
+< content-type: text/html
+< content-length: 612
+< vary: Accept-Encoding
+< last-modified: Tue, 14 Apr 2020 14:19:26 GMT
+< etag: "5e95c66e-264"
+< accept-ranges: bytes
+< 
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+* Connection #0 to host localhost left intact
+``` 
+
