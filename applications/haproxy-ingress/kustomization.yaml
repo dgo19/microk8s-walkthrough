@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+bases:
+  - base/
+
+secretGenerator:
+  - name: tls-secret
+    namespace: ingress-controller
+    files:
+      - tls.crt
+      - tls.key
+    type: Opaque
+
+patchesStrategicMerge:
+   - configmap-haproxy-ingress.yaml
+   - daemonset-haproxy-ingress.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true

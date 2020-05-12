@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: haproxy-ingress
+  namespace: ingress-controller
+spec:
+  template:
+    spec:
+      containers:
+      - name: haproxy-ingress
+        args:
+        - --configmap=ingress-controller/haproxy-ingress
+        - --default-ssl-certificate=ingress-controller/tls-secret
