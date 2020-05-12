@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: haproxy-ingress
+  name: ingress
   namespace: argocd
 spec:
   destination:
-    namespace: ingress-controller
+    namespace: ingress
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: applications/haproxy-ingress
-    repoURL: git@gitlab.home:argocd-k8s-home/clusterconfig.git
+    path: applications/ingress
+    repoURL: https://github.com/dgo19/microk8s-walkthrough.git
     targetRevision: HEAD
   syncPolicy: {}
