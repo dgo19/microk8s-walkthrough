@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: application-ingress
+  namespace: argocd
+spec:
+  destination:
+    namespace: ingress
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: applications/ingress
+    repoURL: https://github.com/dgo19/microk8s-walkthrough.git
+    targetRevision: HEAD
+  syncPolicy: {}
