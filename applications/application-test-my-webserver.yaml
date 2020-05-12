@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: application-test-my-webserver
+  name: test-my-webserver
   namespace: argocd
 spec:
   destination:
