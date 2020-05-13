@@ -4,6 +4,7 @@
 - ubuntu or linux distributrion with snap
 - addition packages
   - curl
+  - git
 
 [Installation of microk8s](install-microk8s-addons.md)
 

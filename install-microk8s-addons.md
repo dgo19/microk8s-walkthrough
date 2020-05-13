@@ -15,6 +15,32 @@ $ mkdir ~/bin
 $ curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.5.4/kustomize_v3.5.4_linux_amd64.tar.gz | tar xvzC ~/bin -f -
 ```
 Re-enter user session.
+
+Add wildcard DNS entry for ingress:
+The wildcard domain *.microk8s.local will be used in this walkthrough for ingress. Please add a the wilcard domain to your DNS server pointing to the IP of the microk8s node.
+
+In case of a single ubuntu VM, you can add the wildcard domain to /etc/hosts (tested on ubuntu 20.04)
+```
+sudo sed -i '/^127.0.0.1/ s/$/ \*\.microk8s\.local/' /etc/hosts
+```
+Test the wildcard domain
+```
+$ ping -c1 hello-wildcard.microk8s.local
+PING hello-wildcard.microk8s.local (192.168.0.133) 56(84) bytes of data.
+64 bytes from dgo-VirtualBox (192.168.0.133): icmp_seq=1 ttl=64 time=0.023 ms
+
+--- hello-wildcard.microk8s.local ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.023/0.023/0.023/0.000 ms
+
+$ ping -c1 hello-wildcard2.microk8s.local
+PING hello-wildcard2.microk8s.local (192.168.0.133) 56(84) bytes of data.
+64 bytes from dgo-VirtualBox (192.168.0.133): icmp_seq=1 ttl=64 time=0.023 ms
+
+--- hello-wildcard2.microk8s.local ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.023/0.023/0.023/0.000 ms
+```
 ## Installation of microk8s addons
 ### addon dns
 Enable the dns addon
