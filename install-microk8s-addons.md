@@ -82,57 +82,56 @@ microk8s-hostpath (default)   microk8s.io/hostpath   Delete          Immediate  
 ### addon ingress
 Enable and verify ingress addon
 ```
-$ microk8s enable ingress
-Enabling Ingress
-namespace/ingress created
-serviceaccount/nginx-ingress-microk8s-serviceaccount created
-clusterrole.rbac.authorization.k8s.io/nginx-ingress-microk8s-clusterrole created
-role.rbac.authorization.k8s.io/nginx-ingress-microk8s-role created
-clusterrolebinding.rbac.authorization.k8s.io/nginx-ingress-microk8s created
-rolebinding.rbac.authorization.k8s.io/nginx-ingress-microk8s created
-configmap/nginx-load-balancer-microk8s-conf created
-daemonset.apps/nginx-ingress-microk8s-controller created
-Ingress is enabled
-$ kubectl -n ingress get daemonset
-NAME                                DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
-nginx-ingress-microk8s-controller   1         1         1       1            1           <none>          76s
-$ kubectl -n ingress describe daemonsets.apps nginx-ingress-microk8s-controller 
-Name:           nginx-ingress-microk8s-controller
-Selector:       name=nginx-ingress-microk8s
-Node-Selector:  <none>
-Labels:         microk8s-application=nginx-ingress-microk8s
-Annotations:    deprecated.daemonset.template.generation: 1
-Desired Number of Nodes Scheduled: 1
-Current Number of Nodes Scheduled: 1
-Number of Nodes Scheduled with Up-to-date Pods: 1
-Number of Nodes Scheduled with Available Pods: 1
-Number of Nodes Misscheduled: 0
-Pods Status:  1 Running / 0 Waiting / 0 Succeeded / 0 Failed
-Pod Template:
-  Labels:           name=nginx-ingress-microk8s
-  Service Account:  nginx-ingress-microk8s-serviceaccount
-  Containers:
-   nginx-ingress-microk8s:
-    Image:       quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.25.1
-    Ports:       80/TCP, 443/TCP
-    Host Ports:  80/TCP, 443/TCP
-    Args:
-      /nginx-ingress-controller
-      --configmap=$(POD_NAMESPACE)/nginx-load-balancer-microk8s-conf
-      --publish-status-address=127.0.0.1
-    Liveness:  http-get http://:10254/healthz delay=30s timeout=5s period=10s #success=1 #failure=3
-    Environment:
-      POD_NAME:        (v1:metadata.name)
-      POD_NAMESPACE:   (v1:metadata.namespace)
-    Mounts:           <none>
-  Volumes:            <none>
-Events:
-  Type    Reason            Age   From                  Message
-  ----    ------            ----  ----                  -------
-  Normal  SuccessfulCreate  95s   daemonset-controller  Created pod: nginx-ingress-microk8s-controller-98zl5
+$ git clone https://github.com/dgo19/microk8s-walkthrough.git
+$ kubectl apply -k .
+namespace/ingress-nginx created
+validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
+serviceaccount/ingress-nginx-admission created
+serviceaccount/ingress-nginx created
+role.rbac.authorization.k8s.io/ingress-nginx-admission created
+role.rbac.authorization.k8s.io/ingress-nginx created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx created
+configmap/ingress-nginx-controller created
+secret/tls-secret created
+service/ingress-nginx-controller-admission created
+service/ingress-nginx-controller created
+deployment.apps/ingress-nginx-controller created
+job.batch/ingress-nginx-admission-create created
+job.batch/ingress-nginx-admission-patch created
+
+$ kubectl -n ingress-nginx get pods
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-kjskm        0/1     Completed   0          10s
+ingress-nginx-admission-patch-h88kr         0/1     Completed   1          10s
+ingress-nginx-controller-69549cbdfd-rzpb9   0/1     Running     0          10s
+
+$ kubectl -n ingress-nginx get pods
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-kjskm        0/1     Completed   0          18s
+ingress-nginx-admission-patch-h88kr         0/1     Completed   1          18s
+ingress-nginx-controller-69549cbdfd-rzpb9   1/1     Running     0          18s
+
+$ kubectl -n ingress-nginx get deployment
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+ingress-nginx-controller   1/1     1            1           116s
+$ kubectl -n ingress-nginx get replicaset
+NAME                                  DESIRED   CURRENT   READY   AGE
+ingress-nginx-controller-69549cbdfd   1         1         1       2m1s
+
 $ kubectl -n ingress get pods -o wide
 NAME                                      READY   STATUS    RESTARTS   AGE   IP              NODE             NOMINATED NODE   READINESS GATES
 nginx-ingress-microk8s-controller-98zl5   1/1     Running   0          12m   192.168.0.133   dgo-virtualbox   <none>           <none>
+
+$ kubectl -n ingress-nginx get pods -o wide
+NAME                                        READY   STATUS      RESTARTS   AGE     IP              NODE             NOMINATED NODE   READINESS GATES
+ingress-nginx-admission-create-kjskm        0/1     Completed   0          3m42s   10.1.20.79      dgo-virtualbox   <none>           <none>
+ingress-nginx-admission-patch-h88kr         0/1     Completed   1          3m42s   10.1.20.80      dgo-virtualbox   <none>           <none>
+ingress-nginx-controller-69549cbdfd-rzpb9   1/1     Running     0          3m42s   192.168.0.133   dgo-virtualbox   <none>           <none>
 ```
 ```
 $ curl -v http://localhost
@@ -146,17 +145,17 @@ $ curl -v http://localhost
 > 
 * Mark bundle as not supporting multiuse
 < HTTP/1.1 404 Not Found
-< Server: openresty/1.15.8.1
-< Date: Mon, 11 May 2020 16:19:35 GMT
+< Server: nginx/1.17.10
+< Date: Wed, 13 May 2020 14:39:56 GMT
 < Content-Type: text/html
-< Content-Length: 159
+< Content-Length: 154
 < Connection: keep-alive
 < 
 <html>
 <head><title>404 Not Found</title></head>
 <body>
 <center><h1>404 Not Found</h1></center>
-<hr><center>openresty/1.15.8.1</center>
+<hr><center>nginx/1.17.10</center>
 </body>
 </html>
 * Connection #0 to host localhost left intact
@@ -180,18 +179,18 @@ $ curl -kv https://localhost
 * TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
 * TLSv1.2 (OUT), TLS handshake, Finished (20):
 * TLSv1.2 (IN), TLS handshake, Finished (20):
-* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
 * ALPN, server accepted to use h2
 * Server certificate:
-*  subject: O=Acme Co; CN=Kubernetes Ingress Controller Fake Certificate
-*  start date: May 11 16:05:16 2020 GMT
-*  expire date: May 11 16:05:16 2021 GMT
-*  issuer: O=Acme Co; CN=Kubernetes Ingress Controller Fake Certificate
-*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+*  subject: O=nginx ingress; OU=nginx ingress; CN=*.microk8s.local
+*  start date: May 13 14:26:15 2020 GMT
+*  expire date: May 11 14:26:15 2030 GMT
+*  issuer: O=nginx ingress; OU=nginx ingress; CN=*.microk8s.local
+*  SSL certificate verify result: self signed certificate (18), continuing anyway.
 * Using HTTP2, server supports multi-use
 * Connection state changed (HTTP/2 confirmed)
 * Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
-* Using Stream ID: 1 (easy handle 0x563139dbbdb0)
+* Using Stream ID: 1 (easy handle 0x55e938b05db0)
 > GET / HTTP/2
 > Host: localhost
 > user-agent: curl/7.68.0
@@ -199,17 +198,17 @@ $ curl -kv https://localhost
 > 
 * Connection state changed (MAX_CONCURRENT_STREAMS == 128)!
 < HTTP/2 404 
-< server: openresty/1.15.8.1
-< date: Mon, 11 May 2020 16:19:49 GMT
+< server: nginx/1.17.10
+< date: Wed, 13 May 2020 14:40:15 GMT
 < content-type: text/html
-< content-length: 159
+< content-length: 154
 < strict-transport-security: max-age=15724800; includeSubDomains
 < 
 <html>
 <head><title>404 Not Found</title></head>
 <body>
 <center><h1>404 Not Found</h1></center>
-<hr><center>openresty/1.15.8.1</center>
+<hr><center>nginx/1.17.10</center>
 </body>
 </html>
 * Connection #0 to host localhost left intact

@@ -290,7 +290,7 @@ Commercial support is available at
 * Connection #0 to host localhost left intact
 ``` 
 ``` 
-dgo@dgo-VirtualBox:~/test/nginx$ curl -kv --header "Host: my-webserver.microk8s.local" https://localhost
+$ curl -kv --header "Host: my-webserver.microk8s.local" https://localhost
 *   Trying 127.0.0.1:443...
 * TCP_NODELAY set
 * Connected to localhost (127.0.0.1) port 443 (#0)
@@ -308,18 +308,18 @@ dgo@dgo-VirtualBox:~/test/nginx$ curl -kv --header "Host: my-webserver.microk8s.
 * TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
 * TLSv1.2 (OUT), TLS handshake, Finished (20):
 * TLSv1.2 (IN), TLS handshake, Finished (20):
-* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
 * ALPN, server accepted to use h2
 * Server certificate:
-*  subject: O=Acme Co; CN=Kubernetes Ingress Controller Fake Certificate
-*  start date: May 11 16:05:16 2020 GMT
-*  expire date: May 11 16:05:16 2021 GMT
-*  issuer: O=Acme Co; CN=Kubernetes Ingress Controller Fake Certificate
-*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+*  subject: O=nginx ingress; OU=nginx ingress; CN=*.microk8s.local
+*  start date: May 13 14:26:15 2020 GMT
+*  expire date: May 11 14:26:15 2030 GMT
+*  issuer: O=nginx ingress; OU=nginx ingress; CN=*.microk8s.local
+*  SSL certificate verify result: self signed certificate (18), continuing anyway.
 * Using HTTP2, server supports multi-use
 * Connection state changed (HTTP/2 confirmed)
 * Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
-* Using Stream ID: 1 (easy handle 0x55a60c1bddb0)
+* Using Stream ID: 1 (easy handle 0x559f5eaf7db0)
 > GET / HTTP/2
 > Host: my-webserver.microk8s.local
 > user-agent: curl/7.68.0
@@ -327,14 +327,15 @@ dgo@dgo-VirtualBox:~/test/nginx$ curl -kv --header "Host: my-webserver.microk8s.
 > 
 * Connection state changed (MAX_CONCURRENT_STREAMS == 128)!
 < HTTP/2 200 
-< server: openresty/1.15.8.1
-< date: Mon, 11 May 2020 16:28:49 GMT
+< server: nginx/1.17.10
+< date: Wed, 13 May 2020 14:42:28 GMT
 < content-type: text/html
 < content-length: 612
 < vary: Accept-Encoding
 < last-modified: Tue, 14 Apr 2020 14:19:26 GMT
 < etag: "5e95c66e-264"
 < accept-ranges: bytes
+< strict-transport-security: max-age=15724800; includeSubDomains
 < 
 <!DOCTYPE html>
 <html>
