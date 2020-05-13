@@ -2,8 +2,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ingress-my-webserver
-  annotations:
-    kubernetes.io/ingress.class: nginx
 spec:
   rules:
   - host: my-webserver.microk8s.local
@@ -11,4 +9,4 @@ spec:
       paths:
       - backend:
           serviceName: my-webserver
-          servicePort: http
+          servicePort: 80
