@@ -16,6 +16,7 @@ $ curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomi
 ```
 Re-enter user session.
 
+## Wildcard DNS for ingress
 Add wildcard DNS entry for ingress:
 The wildcard domain *.microk8s.local will be used in this walkthrough for ingress. Please add a the wilcard domain to your DNS server pointing to the IP of the microk8s node.
 
