@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-configmap-web
+spec:
+  rules:
+  - host: configmap-web.microk8s.local
+    http:
+      paths:
+      - backend:
+          serviceName: configmap-web
+          servicePort: 80

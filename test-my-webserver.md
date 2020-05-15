@@ -371,6 +371,7 @@ namespace "test" deleted
 ``` 
 Create my-webserver by using kustomize build. Examples at applications/test-my-webserver
 ``` 
+$ cd microk8s-walkthrough/applications/test-my-webserver/
 $ kustomize build . | kubectl apply -f -
 namespace/test created
 service/my-webserver created

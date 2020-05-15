@@ -9,5 +9,7 @@
 [Installation of microk8s](install-microk8s-addons.md)
 
 ## App Deployments
-- Deployments, Pods, Service, Ingress
+- Pods, Deployment, Service, Ingress
   - [nginx webserver example](test-my-webserver.md)
+- ConfigMaps
+  - [nginx webserver with configmaps](configmap-webserver.md)
