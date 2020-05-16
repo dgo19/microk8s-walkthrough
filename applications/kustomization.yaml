@@ -5,4 +5,5 @@ resources:
   - application-configmaps.yaml
   - application-ingress-nginx.yaml
   - application-mariadb-ephemeral.yaml
+  - application-mariadb-pv.yaml
   - application-test-my-webserver.yaml
