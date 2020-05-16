@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-phpmyadmin
+spec:
+  rules:
+  - host: pma-mariadb-ephemeral.microk8s.local
+    http:
+      paths:
+      - backend:
+          serviceName: phpmyadmin
+          servicePort: 80
