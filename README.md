@@ -5,6 +5,7 @@
 - addition packages
   - curl
   - git
+  - snapd (on debian)
 
 [Installation of microk8s](install-microk8s-addons.md)
 

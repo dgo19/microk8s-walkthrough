@@ -1,6 +1,6 @@
 ## Installation of microk8s
 ```
-$ snap install microk8s --classic
+$ sudo snap install microk8s --classic
 microk8s v1.18.2 from Canonical installed
 ```
 Add user to microk8s group and set alias for kubectl
@@ -76,7 +76,7 @@ NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AG
 kube-dns   ClusterIP   10.152.183.10   <none>        53/UDP,53/TCP,9153/TCP   12m
 ```
 ### addon storage
-Enable and verifiy storage addon
+Enable and verify storage addon
 ```
 $ microk8s enable storage
 Enabling default storage class
@@ -110,6 +110,7 @@ microk8s-hostpath (default)   microk8s.io/hostpath   Delete          Immediate  
 Enable and verify ingress addon
 ```
 $ git clone https://github.com/dgo19/microk8s-walkthrough.git
+$ cd microk8s-walkthrough/applications/ingress-nginx
 $ kubectl apply -k .
 namespace/ingress-nginx created
 validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
@@ -150,7 +151,7 @@ $ kubectl -n ingress-nginx get replicaset
 NAME                                  DESIRED   CURRENT   READY   AGE
 ingress-nginx-controller-69549cbdfd   1         1         1       2m1s
 
-$ kubectl -n ingress get pods -o wide
+$ kubectl -n ingress-nginx get pods -o wide
 NAME                                      READY   STATUS    RESTARTS   AGE   IP              NODE             NOMINATED NODE   READINESS GATES
 nginx-ingress-microk8s-controller-98zl5   1/1     Running   0          12m   192.168.0.133   dgo-virtualbox   <none>           <none>
 
