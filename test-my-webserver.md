@@ -25,6 +25,9 @@ replicaset.apps/my-webserver-6859dc4665   1         1         1       27s
 ``` 
 Access the new pod
 ``` 
+$ kubectl -n test get pods -o wide
+NAME                            READY   STATUS    RESTARTS   AGE     IP          NODE             NOMINATED NODE   READINESS GATES
+my-webserver-6859dc4665-b52b8   1/1     Running   0          3m33s   10.1.20.4   dgo-virtualbox   <none>           <none>
 $ ping 10.1.20.4
 PING 10.1.20.4 (10.1.20.4) 56(84) bytes of data.
 64 bytes from 10.1.20.4: icmp_seq=1 ttl=64 time=0.111 ms
