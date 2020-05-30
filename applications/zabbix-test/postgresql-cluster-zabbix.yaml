@@ -6,7 +6,7 @@ spec:
   teamId: "zabbix"
   volume:
     size: 2Gi
-    storageclass: rook-ceph-block
+    storageclass: microk8s-hostpath
   numberOfInstances: 1
   users:
     zabbix:  # database owner
