@@ -10,6 +10,6 @@ spec:
   project: default
   source:
     path: applications/postgres-operator
-    repoURL: git@gitlab.home:argocd-k8s-home/applications.git
+    repoURL: https://github.com/dgo19/microk8s-walkthrough.git
     targetRevision: HEAD
   syncPolicy: {}
