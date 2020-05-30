@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zabbix-server
+  namespace: default
+  labels:
+    app: zabbix-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zabbix-server
+  template:
+    metadata:
+      labels:
+        app: zabbix-server
+    spec:
+      containers:
+      - name: zabbix-server
+        image: zabbix/zabbix-server-pgsql:ubuntu-5.0.1
+        env:
+        - name: DB_SERVER_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: zabbix-config
+              key: DB_SERVER_HOST
+        - name: DB_SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: zabbix-config
+              key: DB_SERVER_PORT
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: zabbix-config
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: zabbix.zabbix-postgresql-cluster.credentials
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: zabbix.zabbix-postgresql-cluster.credentials
+              key: password

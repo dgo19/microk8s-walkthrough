@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: zabbix-test
+
+configMapGenerator:
+  - name: zabbix-config
+    literals:
+      - ZBX_SERVER_HOST=zabbix-server
+      - ZBX_SERVER_PORT=10051
+      - DB_SERVER_HOST=zabbix-postgresql-cluster
+      - DB_SERVER_PORT=5432
+      - POSTGRES_DB=zabbix
+      - PHP_TZ=Europe/Berlin
+
+resources:
+  - deployment-zabbix-server.yaml
+  - deployment-zabbix-web-nginx-pgsql.yaml
+  - ingress-zabbix-web.yaml
+  - namespace-zabbix-test.yaml
+  - postgresql-cluster-zabbix.yaml
+  - service-zabbix-server.yaml
+  - service-zabbix-web-nginx-pgsql.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true

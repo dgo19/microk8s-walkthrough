@@ -1,0 +1,18 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: zabbix-postgresql-cluster
+spec:
+  teamId: "zabbix"
+  volume:
+    size: 10Gi
+    storageclass: rook-ceph-block
+  numberOfInstances: 2
+  users:
+    zabbix:  # database owner
+    - superuser
+    - createdb
+  databases:
+    zabbix: zabbix  # dbname: owner
+  postgresql:
+    version: "11"

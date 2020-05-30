@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zabbix-test
+  namespace: argocd
+spec:
+  destination:
+    namespace: zabbix-test
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: applications/zabbix-test
+    repoURL: git@gitlab.home:argocd-k8s-home/applications.git
+    targetRevision: HEAD
+  syncPolicy: {}

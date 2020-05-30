@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: zabbix-web-nginx-pgsql
+spec:
+  selector:
+    app: zabbix-web-nginx-pgsql
+  ports:
+  - port: 8080
+  type: ClusterIP
