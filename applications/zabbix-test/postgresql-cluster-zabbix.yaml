@@ -5,9 +5,9 @@ metadata:
 spec:
   teamId: "zabbix"
   volume:
-    size: 10Gi
+    size: 2Gi
     storageclass: rook-ceph-block
-  numberOfInstances: 2
+  numberOfInstances: 1
   users:
     zabbix:  # database owner
     - superuser

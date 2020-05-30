@@ -10,6 +10,8 @@ spec:
   selector:
     matchLabels:
       app: zabbix-server
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
