@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+spec:
+  rules:
+  - host: grafana.microk8s.local
+    http:
+      paths:
+      - backend:
+          serviceName: grafana
+          servicePort: 3000
