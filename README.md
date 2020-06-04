@@ -16,3 +16,4 @@
   - [nginx webserver with configmaps](configmap-webserver.md)
 - ArgoCD
   - [ArgoCD Deployment and first steps](argocd.md)
+  - [ArgoCD Application Deployment](argocd-apps.md)
