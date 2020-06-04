@@ -14,3 +14,5 @@
   - [nginx webserver example](test-my-webserver.md)
 - ConfigMaps
   - [nginx webserver with configmaps](configmap-webserver.md)
+- ArgoCD
+  - [ArgoCD Deployment and first steps](argocd.md)
