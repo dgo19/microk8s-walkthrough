@@ -17,3 +17,5 @@
 - ArgoCD
   - [ArgoCD Deployment and first steps](argocd.md)
   - [ArgoCD Application Deployment](argocd-apps.md)
+- Monitoring
+  - [Monitoring (Grafana, Prometheus, Alertmanager, Node-Exporter)](prometheus.md)
