@@ -5,7 +5,7 @@ metadata:
 spec:
 spec:
   rules:
-  - host: zabbix-test.microk8s.local
+  - host: zabbix.microk8s.local
     http:
       paths:
       - backend:

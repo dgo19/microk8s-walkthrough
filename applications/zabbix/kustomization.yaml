@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: zabbix-test
+namespace: zabbix
 
 configMapGenerator:
   - name: zabbix-config
@@ -17,7 +17,7 @@ resources:
   - deployment-zabbix-server.yaml
   - deployment-zabbix-web-nginx-pgsql.yaml
   - ingress-zabbix-web.yaml
-  - namespace-zabbix-test.yaml
+  - namespace-zabbix.yaml
   - postgresql-cluster-zabbix.yaml
   - service-zabbix-server.yaml
   - service-zabbix-web-nginx-pgsql.yaml
