@@ -9,4 +9,4 @@ resources:
   - application-monitoring.yaml
   - application-postgres-operator.yaml
   - application-test-my-webserver.yaml
-  - application-zabbix-test.yaml
+  - application-zabbix.yaml
