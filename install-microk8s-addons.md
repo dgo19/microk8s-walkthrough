@@ -6,8 +6,8 @@ microk8s v1.18.2 from Canonical installed
 Add user to microk8s group and set alias for kubectl
 ```
 $ sudo usermod -a -G microk8s dgo
-$ echo "alias kubectl='microk8s kubectl'" >> .bashrc
-$ echo 'source <(microk8s kubectl completion bash)' >> .bashrc
+$ echo "alias kubectl='microk8s kubectl'" >> ~/.bashrc
+$ echo 'source <(microk8s kubectl completion bash)' >> ~/.bashrc
 ```
 Get kustomize
 ```
