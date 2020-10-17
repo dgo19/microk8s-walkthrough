@@ -1,7 +1,7 @@
 ## Installation of microk8s
 ```
 $ sudo snap install microk8s --classic
-microk8s v1.18.2 from Canonical installed
+microk8s (1.19/stable) v1.19.2 from Canonical installed
 ```
 Add user to microk8s group and set alias for kubectl
 ```
@@ -12,7 +12,7 @@ $ echo 'source <(microk8s kubectl completion bash)' >> ~/.bashrc
 Get kustomize
 ```
 $ mkdir ~/bin
-$ curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.5.4/kustomize_v3.5.4_linux_amd64.tar.gz | tar xvzC ~/bin -f -
+$ curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.8.5/kustomize_v3.8.5_linux_amd64.tar.gz | tar xvzC ~/bin -f -
 ```
 Re-enter user session.
 
@@ -56,24 +56,27 @@ service/kube-dns created
 clusterrole.rbac.authorization.k8s.io/coredns created
 clusterrolebinding.rbac.authorization.k8s.io/coredns created
 Restarting kubelet
-[sudo] password for dgo: 
 DNS is enabled
 ```
 Verify the deployment, replicaset, pod and service
 ```
 $ kubectl -n kube-system get events
 $ kubectl -n kube-system get deployment
-NAME      READY   UP-TO-DATE   AVAILABLE   AGE
-coredns   1/1     1            1           12m
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+calico-kube-controllers   1/1     1            1           3m37s
+coredns                   1/1     1            1           52s
 $ kubectl -n kube-system get replicaset
-NAME                 DESIRED   CURRENT   READY   AGE
-coredns-588fd544bf   1         1         1       12m
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+calico-kube-controllers   1/1     1            1           3m37s
+coredns                   1/1     1            1           52s
 $ kubectl -n kube-system get pods
-NAME                       READY   STATUS    RESTARTS   AGE
-coredns-588fd544bf-cstvl   1/1     Running   0          12m
+NAME                                      READY   STATUS    RESTARTS   AGE
+calico-node-227wh                         1/1     Running   1          4m23s
+calico-kube-controllers-847c8c99d-9nxfd   1/1     Running   0          4m24s
+coredns-86f78bb79c-xrf9h                  1/1     Running   0          104s
 $ kubectl -n kube-system get svc
 NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE
-kube-dns   ClusterIP   10.152.183.10   <none>        53/UDP,53/TCP,9153/TCP   12m
+kube-dns   ClusterIP   10.152.183.10   <none>        53/UDP,53/TCP,9153/TCP   2m8s
 ```
 ### addon storage
 Enable and verify storage addon
@@ -88,23 +91,26 @@ clusterrolebinding.rbac.authorization.k8s.io/microk8s-hostpath created
 Storage will be available soon
 $ kubectl -n kube-system get events
 $ kubectl -n kube-system get deployment
-NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
-coredns                1/1     1            1           14m
-hostpath-provisioner   1/1     1            1           18s
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+calico-kube-controllers   1/1     1            1           6m2s
+coredns                   1/1     1            1           3m17s
+hostpath-provisioner      1/1     1            1           13s
 $ kubectl -n kube-system get replicaset
-NAME                              DESIRED   CURRENT   READY   AGE
-coredns-588fd544bf                1         1         1       14m
-hostpath-provisioner-75fdc8fccd   1         1         1       26s
+NAME                                DESIRED   CURRENT   READY   AGE
+calico-kube-controllers-847c8c99d   1         1         1       6m18s
+coredns-86f78bb79c                  1         1         1       3m38s
+hostpath-provisioner-5c65fbdb4f     1         1         1       34s
 $ kubectl -n kube-system get pods
-NAME                                    READY   STATUS    RESTARTS   AGE
-coredns-588fd544bf-cstvl                1/1     Running   0          14m
-hostpath-provisioner-75fdc8fccd-nnzrl   1/1     Running   0          33s
+NAME                                DESIRED   CURRENT   READY   AGE
+calico-kube-controllers-847c8c99d   1         1         1       6m18s
+coredns-86f78bb79c                  1         1         1       3m38s
+hostpath-provisioner-5c65fbdb4f     1         1         1       34s
 $ kubectl -n kube-system get svc
 NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE
-kube-dns   ClusterIP   10.152.183.10   <none>        53/UDP,53/TCP,9153/TCP   14m
+kube-dns   ClusterIP   10.152.183.10   <none>        53/UDP,53/TCP,9153/TCP   4m16s
 $ kubectl -n kube-system get storageclass
 NAME                          PROVISIONER            RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
-microk8s-hostpath (default)   microk8s.io/hostpath   Delete          Immediate           false                  46s
+microk8s-hostpath (default)   microk8s.io/hostpath   Delete          Immediate           false                  89s
 ```
 ### addon ingress
 Enable and verify ingress addon
@@ -133,33 +139,30 @@ job.batch/ingress-nginx-admission-create created
 job.batch/ingress-nginx-admission-patch created
 
 $ kubectl -n ingress-nginx get pods
-NAME                                        READY   STATUS      RESTARTS   AGE
-ingress-nginx-admission-create-kjskm        0/1     Completed   0          10s
-ingress-nginx-admission-patch-h88kr         0/1     Completed   1          10s
-ingress-nginx-controller-69549cbdfd-rzpb9   0/1     Running     0          10s
+NAME                                        READY   STATUS              RESTARTS   AGE
+ingress-nginx-controller-76b4d74777-lbgwq   0/1     ContainerCreating   0          28s
+ingress-nginx-admission-create-fvw79        0/1     Completed           0          28s
+ingress-nginx-admission-patch-9nwln         0/1     Completed           0          28s
 
 $ kubectl -n ingress-nginx get pods
 NAME                                        READY   STATUS      RESTARTS   AGE
-ingress-nginx-admission-create-kjskm        0/1     Completed   0          18s
-ingress-nginx-admission-patch-h88kr         0/1     Completed   1          18s
-ingress-nginx-controller-69549cbdfd-rzpb9   1/1     Running     0          18s
+ingress-nginx-admission-create-fvw79        0/1     Completed   0          58s
+ingress-nginx-admission-patch-9nwln         0/1     Completed   0          58s
+ingress-nginx-controller-76b4d74777-lbgwq   1/1     Running     0          58s
 
 $ kubectl -n ingress-nginx get deployment
 NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
-ingress-nginx-controller   1/1     1            1           116s
+ingress-nginx-controller   1/1     1            1           112s
+
 $ kubectl -n ingress-nginx get replicaset
 NAME                                  DESIRED   CURRENT   READY   AGE
-ingress-nginx-controller-69549cbdfd   1         1         1       2m1s
+ingress-nginx-controller-76b4d74777   1         1         1       2m
 
 $ kubectl -n ingress-nginx get pods -o wide
-NAME                                      READY   STATUS    RESTARTS   AGE   IP              NODE             NOMINATED NODE   READINESS GATES
-nginx-ingress-microk8s-controller-98zl5   1/1     Running   0          12m   192.168.0.133   dgo-virtualbox   <none>           <none>
-
-$ kubectl -n ingress-nginx get pods -o wide
-NAME                                        READY   STATUS      RESTARTS   AGE     IP              NODE             NOMINATED NODE   READINESS GATES
-ingress-nginx-admission-create-kjskm        0/1     Completed   0          3m42s   10.1.20.79      dgo-virtualbox   <none>           <none>
-ingress-nginx-admission-patch-h88kr         0/1     Completed   1          3m42s   10.1.20.80      dgo-virtualbox   <none>           <none>
-ingress-nginx-controller-69549cbdfd-rzpb9   1/1     Running     0          3m42s   192.168.0.133   dgo-virtualbox   <none>           <none>
+NAME                                        READY   STATUS      RESTARTS   AGE    IP              NODE             NOMINATED NODE   READINESS GATES
+ingress-nginx-admission-create-fvw79        0/1     Completed   0          2m6s   10.1.100.197    dgo-virtualbox   <none>           <none>
+ingress-nginx-admission-patch-9nwln         0/1     Completed   0          2m6s   10.1.100.198    dgo-virtualbox   <none>           <none>
+ingress-nginx-controller-76b4d74777-lbgwq   1/1     Running     0          2m6s   192.168.0.133   dgo-virtualbox   <none>           <none>
 ```
 ```
 $ curl -v http://localhost
@@ -173,17 +176,16 @@ $ curl -v http://localhost
 > 
 * Mark bundle as not supporting multiuse
 < HTTP/1.1 404 Not Found
-< Server: nginx/1.17.10
-< Date: Wed, 13 May 2020 14:39:56 GMT
+< Date: Sat, 17 Oct 2020 11:38:45 GMT
 < Content-Type: text/html
-< Content-Length: 154
+< Content-Length: 146
 < Connection: keep-alive
 < 
 <html>
 <head><title>404 Not Found</title></head>
 <body>
 <center><h1>404 Not Found</h1></center>
-<hr><center>nginx/1.17.10</center>
+<hr><center>nginx</center>
 </body>
 </html>
 * Connection #0 to host localhost left intact
@@ -200,43 +202,44 @@ $ curl -kv https://localhost
   CApath: /etc/ssl/certs
 * TLSv1.3 (OUT), TLS handshake, Client hello (1):
 * TLSv1.3 (IN), TLS handshake, Server hello (2):
-* TLSv1.2 (IN), TLS handshake, Certificate (11):
-* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
-* TLSv1.2 (IN), TLS handshake, Server finished (14):
-* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
-* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
-* TLSv1.2 (OUT), TLS handshake, Finished (20):
-* TLSv1.2 (IN), TLS handshake, Finished (20):
-* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
 * ALPN, server accepted to use h2
 * Server certificate:
 *  subject: O=nginx ingress; OU=nginx ingress; CN=*.microk8s.local
 *  start date: May 13 14:26:15 2020 GMT
 *  expire date: May 11 14:26:15 2030 GMT
 *  issuer: O=nginx ingress; OU=nginx ingress; CN=*.microk8s.local
-*  SSL certificate verify result: self signed certificate (18), continuing anyway.
+*  SSL certificate verify ok.
 * Using HTTP2, server supports multi-use
 * Connection state changed (HTTP/2 confirmed)
 * Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
-* Using Stream ID: 1 (easy handle 0x55e938b05db0)
+* Using Stream ID: 1 (easy handle 0x55932d181db0)
 > GET / HTTP/2
 > Host: localhost
 > user-agent: curl/7.68.0
 > accept: */*
 > 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
 * Connection state changed (MAX_CONCURRENT_STREAMS == 128)!
 < HTTP/2 404 
-< server: nginx/1.17.10
-< date: Wed, 13 May 2020 14:40:15 GMT
+< date: Sat, 17 Oct 2020 11:39:22 GMT
 < content-type: text/html
-< content-length: 154
+< content-length: 146
 < strict-transport-security: max-age=15724800; includeSubDomains
 < 
 <html>
 <head><title>404 Not Found</title></head>
 <body>
 <center><h1>404 Not Found</h1></center>
-<hr><center>nginx/1.17.10</center>
+<hr><center>nginx</center>
 </body>
 </html>
 * Connection #0 to host localhost left intact
