@@ -228,7 +228,7 @@ $ kubectl -n test logs my-webserver-6859dc4665-xmbsh
 Create and test ingress.
 ``` 
 $ cat <<EOF | kubectl -n test apply -f -
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-my-webserver
@@ -237,9 +237,13 @@ spec:
   - host: my-webserver.microk8s.local
     http:
       paths:
-      - backend:
-          serviceName: my-webserver
-          servicePort: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: my-webserver
+            port:
+              name: http
 EOF
 ingress.extensions/ingress-my-webserver created
 ``` 
