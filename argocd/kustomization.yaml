@@ -35,5 +35,9 @@ resources:
   - ingress-argocd.yaml
   - namespace-argocd.yaml
 
+images:
+- name: argoproj/argocd
+  digest: sha256:e3ef45ca9a6b735c23b92349a16d52a63376bb85dfd9bde6ad28b012b64605ad
+
 generatorOptions:
   disableNameSuffixHash: true
