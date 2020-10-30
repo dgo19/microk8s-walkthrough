@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: zabbix-web-nginx-pgsql
-        image: zabbix/zabbix-web-nginx-pgsql:ubuntu-5.0.1
+        image: zabbix/zabbix-web-nginx-pgsql:ubuntu-5.2.0
         env:
         - name: ZBX_SERVER_HOST
           valueFrom:
