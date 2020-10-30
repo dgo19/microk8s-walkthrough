@@ -243,7 +243,7 @@ spec:
           service:
             name: my-webserver
             port:
-              name: http
+              number: 80
 EOF
 ingress.extensions/ingress-my-webserver created
 ``` 
