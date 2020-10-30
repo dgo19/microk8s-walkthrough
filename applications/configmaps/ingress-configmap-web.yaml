@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-configmap-web
@@ -7,6 +7,10 @@ spec:
   - host: configmap-web.microk8s.local
     http:
       paths:
-      - backend:
-          serviceName: configmap-web
-          servicePort: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: configmap-web
+            port:
+              number: 80
