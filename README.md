@@ -1,4 +1,7 @@
-# microk8s walkthrough
+# microk8s walkthrough (archived)
+
+# This project has been archived.
+# For the new version with k3s, see [github.com/dgo19/k3s-demo](https://github.com/dgo19/k3s-demo/)
 
 ## Requirements
 - ubuntu or linux distributrion with snap
